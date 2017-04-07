@@ -10,9 +10,9 @@ public:
     LinearModel();
     virtual ~LinearModel();
 
-    Eigen::VectorXd& y() { return y_; }
-    Eigen::MatrixXd& X() { return X_; }
-    Eigen::VectorXd& beta() { return beta_; }
+    Eigen::VectorXd& y() { return _y; }
+    Eigen::MatrixXd& X() { return _X; }
+    Eigen::VectorXd& beta() { return _beta; }
 
     void SetData(Eigen::MatrixXd& X, Eigen::VectorXd& y);
     virtual void Fit() {};
@@ -20,9 +20,10 @@ public:
 
 protected:
     // Fit: y = X * beta
-    Eigen::VectorXd y_;
-    Eigen::MatrixXd X_;
-    Eigen::VectorXd beta_;
+    // convention: lowercase: vector, uppercase matrix.
+    Eigen::VectorXd _y;
+    Eigen::MatrixXd _X;
+    Eigen::VectorXd _beta;
 
 };
 
