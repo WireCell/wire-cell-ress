@@ -25,26 +25,33 @@ WireCell::ElasticNetModel::~ElasticNetModel()
 
 void WireCell::ElasticNetModel::Fit()
 {
+    // initialize solution to zero
+    Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
+
+    // use alias for easy notation
+    Eigen::VectorXd y = Gety();
+    Eigen::MatrixXd X = GetX();
+
     // cooridate decsent
-    int nbeta = _beta.size();
-    int ny = _y.size();
+    int nbeta = beta.size();
+    int ny = y.size();
     VectorXd norm(nbeta);
     for (int j=0; j<nbeta; j++) {
-        norm(j) = _X.col(j).dot(_X.col(j));
+        norm(j) = X.col(j).squaredNorm();
         if (norm(j) < 1e-6) {norm(j) = 1;}
     }
     double tol2 = TOL*TOL;
 
     for (int i=0; i<max_iter; i++) {
-        VectorXd _betalast = _beta;
+        VectorXd betalast = beta;
         for (int j=0; j<nbeta; j++) {
-            VectorXd X_j = _X.col(j);
-            VectorXd r_j = (_y - _X * _beta) + X_j * _beta(j);
+            VectorXd X_j = X.col(j);
+            VectorXd r_j = (y - X * beta) + X_j * beta(j);
             double delta_j = X_j.dot(r_j);
-            _beta(j) = _soft_thresholding(delta_j, lambda*ny) / norm(j);
-            // if (j==0) cout << _beta(j) << ", " << arg1 << endl;
+            beta(j) = _soft_thresholding(delta_j, lambda*ny) / norm(j);
+            // if (j==0) cout << beta(j) << ", " << arg1 << endl;
         }
-        VectorXd diff = _beta - _betalast;
+        VectorXd diff = beta - betalast;
         if (diff.squaredNorm()<tol2) {
             // cout << "found minimum at iteration: " << i << endl;
             // cout << diff << endl;
@@ -52,6 +59,7 @@ void WireCell::ElasticNetModel::Fit()
         }
     }
 
+    Setbeta(beta);
 }
 
 double WireCell::ElasticNetModel::_soft_thresholding(double delta, double lambda_)

@@ -41,23 +41,24 @@ int main(int argc, char* argv[])
     // LassoModel m(0.5, int(1000));
     m.SetData(G, W);
     m.Fit();
+    VectorXd beta = m.Getbeta();
 
     cout << "geometry matrix:" << endl;
-    cout << m.X() << endl << endl;
+    cout << G << endl << endl;
 
     cout << "true charge of each cell:" << endl;
     cout << C.transpose() << endl << endl;
 
     cout << "fitted charge of each cell:" << endl;
-    cout << m.beta().transpose() << endl << endl;
+    cout << beta.transpose() << endl << endl;
 
     cout << "measured charge on each wire:" << endl;
-    cout << m.y().transpose() << endl << endl;
+    cout << W.transpose() << endl << endl;
 
     cout << "predicted charge on each wire:" << endl;
     cout << m.Predict().transpose() << endl << endl;
 
-    cout << "residual distance:" << sqrt((m.Predict() - m.y()).dot(m.Predict() - m.y())) << endl;
+    cout << "residual distance:" << (m.Predict() - W).norm() << endl;
 
     return 0;
 }

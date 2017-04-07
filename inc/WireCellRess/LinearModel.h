@@ -10,11 +10,15 @@ public:
     LinearModel();
     virtual ~LinearModel();
 
-    Eigen::VectorXd& y() { return _y; }
-    Eigen::MatrixXd& X() { return _X; }
-    Eigen::VectorXd& beta() { return _beta; }
+    Eigen::VectorXd& Gety() { return _y; }
+    Eigen::MatrixXd& GetX() { return _X; }
+    Eigen::VectorXd& Getbeta() { return _beta; }
 
-    void SetData(Eigen::MatrixXd& X, Eigen::VectorXd& y);
+    void SetData(Eigen::MatrixXd X, Eigen::VectorXd y) { _X = X; _y = y; }
+    void Sety(Eigen::VectorXd y) { _y = y; }
+    void SetX(Eigen::MatrixXd X) { _X = X; }
+    void Setbeta(Eigen::VectorXd beta) { _beta = beta; }
+
     virtual void Fit() {};
     Eigen::VectorXd Predict();
 
