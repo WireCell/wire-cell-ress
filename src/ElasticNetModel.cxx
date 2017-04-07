@@ -7,7 +7,7 @@ using namespace Eigen;
 using namespace std;
 
 /* Minimize the following problem:
- * 1/(2N) * ||Y - beta * X||_2^2 + lambda * (
+ * 1/(2) * ||Y - beta * X||_2^2 + N * lambda * (
  *   alpha * ||beta||_1 + 0.5 * (1-alpha) * ||beta||_2^2
  * )
  * To control L1 and L2 separately, this is equivaletnt to a * L1 + b * L2,
@@ -34,11 +34,14 @@ void WireCell::ElasticNetModel::Fit()
 
     // cooridate decsent
     int nbeta = beta.size();
-    int ny = y.size();
+    int N = y.size();
     VectorXd norm(nbeta);
     for (int j=0; j<nbeta; j++) {
         norm(j) = X.col(j).squaredNorm();
-        if (norm(j) < 1e-6) {norm(j) = 1;}
+        if (norm(j) < 1e-6) {
+            cerr << "warning: the " << j << "th variable is not used, please consider removing it." << endl;
+            norm(j) = 1;
+        }
     }
     double tol2 = TOL*TOL;
 
@@ -46,9 +49,11 @@ void WireCell::ElasticNetModel::Fit()
         VectorXd betalast = beta;
         for (int j=0; j<nbeta; j++) {
             VectorXd X_j = X.col(j);
-            VectorXd r_j = (y - X * beta) + X_j * beta(j);
+            VectorXd beta_tmp = beta;
+            beta_tmp(j) = 0;
+            VectorXd r_j = (y - X * beta_tmp);
             double delta_j = X_j.dot(r_j);
-            beta(j) = _soft_thresholding(delta_j, lambda*ny) / norm(j);
+            beta(j) = _soft_thresholding(delta_j, N*lambda*alpha) / (1+lambda*(1-alpha)) / norm(j);
             // if (j==0) cout << beta(j) << ", " << arg1 << endl;
         }
         VectorXd diff = beta - betalast;
@@ -59,6 +64,7 @@ void WireCell::ElasticNetModel::Fit()
         }
     }
 
+    // save results in the model
     Setbeta(beta);
 }
 

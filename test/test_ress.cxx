@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 {
     // std::srand((unsigned int) time(0));
 
-    const int N_CELL = 16;
+    const int N_CELL = 15;
     const int N_ZERO = 10;
     const int N_WIRE = int(N_CELL * 0.8);
 
@@ -37,11 +37,15 @@ int main(int argc, char* argv[])
     // cout << G << endl << endl;
     // cout << C << endl << endl;
 
-    WireCell::LassoModel m(0.5, 100000, 1e-4);
-    // LassoModel m(0.5, int(1000));
+    WireCell::ElasticNetModel m(0.5, 0.99, 100000, 1e-4);
     m.SetData(G, W);
     m.Fit();
-    VectorXd beta = m.Getbeta();
+    VectorXd beta_elastic_net = m.Getbeta();
+
+    WireCell::LassoModel m2(0.5, 100000, 1e-4);
+    m2.SetData(G, W);
+    m2.Fit();
+    VectorXd beta_lasso = m2.Getbeta();
 
     cout << "geometry matrix:" << endl;
     cout << G << endl << endl;
@@ -49,16 +53,20 @@ int main(int argc, char* argv[])
     cout << "true charge of each cell:" << endl;
     cout << C.transpose() << endl << endl;
 
-    cout << "fitted charge of each cell:" << endl;
-    cout << beta.transpose() << endl << endl;
+    cout << "fitted charge of each cell: Elastic Net" << endl;
+    cout << beta_elastic_net.transpose() << endl << endl;
+
+    cout << "fitted charge of each cell: Lasso" << endl;
+    cout << beta_lasso.transpose() << endl << endl;
 
     cout << "measured charge on each wire:" << endl;
     cout << W.transpose() << endl << endl;
 
-    cout << "predicted charge on each wire:" << endl;
-    cout << m.Predict().transpose() << endl << endl;
+    cout << "predicted charge on each wire: Lasso" << endl;
+    cout << m2.Predict().transpose() << endl << endl;
 
-    cout << "residual distance:" << (m.Predict() - W).norm() << endl;
+    cout << "residual distance: Elastic Net: " << (m.Predict() - W).norm()
+         << ", Lasso: " << (m2.Predict() - W).norm()  << endl;
 
     return 0;
 }
