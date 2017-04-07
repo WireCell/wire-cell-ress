@@ -2,6 +2,7 @@
 #define WIRECELLRESS_ELASTICNETMODEL_H
 
 #include "WireCellRess/LinearModel.h"
+// #include <vector>
 
 namespace WireCell {
 
@@ -18,8 +19,9 @@ public:
 
     void Fit();
 
-private:
-    double _soft_thresholding(double x, double lambda_);
+protected:
+    double _soft_thresholding(double x, double lambda_, int index);
+    // std::vector<bool> _active_beta;
 };
 
 }

@@ -9,6 +9,7 @@ using namespace std;
 WireCell::LassoModel::LassoModel(double lambda, int max_iter, double TOL, bool non_negtive)
 : ElasticNetModel(lambda, 1., max_iter, TOL, non_negtive)
 {
+    name = "Lasso";
 }
 
 WireCell::LassoModel::~LassoModel()

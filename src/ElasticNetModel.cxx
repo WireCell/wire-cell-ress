@@ -17,7 +17,7 @@ using namespace std;
 WireCell::ElasticNetModel::ElasticNetModel(double lambda, double alpha, int max_iter, double TOL, bool non_negtive)
 : lambda(lambda), alpha(alpha), max_iter(max_iter), TOL(TOL), non_negtive(non_negtive)
 {
-    // cout << "Model constructed" << endl;
+    name = "Elastic net";
 }
 
 WireCell::ElasticNetModel::~ElasticNetModel()
@@ -28,12 +28,15 @@ void WireCell::ElasticNetModel::Fit()
     // initialize solution to zero
     Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
 
+    // initialize active_beta to true
+    int nbeta = beta.size();
+    // _active_beta = vector<bool>(nbeta, true);
+
     // use alias for easy notation
     Eigen::VectorXd y = Gety();
     Eigen::MatrixXd X = GetX();
 
     // cooridate decsent
-    int nbeta = beta.size();
     int N = y.size();
     VectorXd norm(nbeta);
     for (int j=0; j<nbeta; j++) {
@@ -43,22 +46,23 @@ void WireCell::ElasticNetModel::Fit()
             norm(j) = 1;
         }
     }
-    double tol2 = TOL*TOL;
+    double tol2 = TOL*TOL*nbeta;
 
     for (int i=0; i<max_iter; i++) {
         VectorXd betalast = beta;
         for (int j=0; j<nbeta; j++) {
+            // if (!_active_beta[j]) continue;
             VectorXd X_j = X.col(j);
             VectorXd beta_tmp = beta;
             beta_tmp(j) = 0;
             VectorXd r_j = (y - X * beta_tmp);
             double delta_j = X_j.dot(r_j);
-            beta(j) = _soft_thresholding(delta_j, N*lambda*alpha) / (1+lambda*(1-alpha)) / norm(j);
+            beta(j) = _soft_thresholding(delta_j, N*lambda*alpha, j) / (1+lambda*(1-alpha)) / norm(j);
             // if (j==0) cout << beta(j) << ", " << arg1 << endl;
         }
         VectorXd diff = beta - betalast;
         if (diff.squaredNorm()<tol2) {
-            // cout << "found minimum at iteration: " << i << endl;
+            cout << "found minimum at iteration: " << i << endl;
             // cout << diff << endl;
             break;
         }
@@ -68,22 +72,21 @@ void WireCell::ElasticNetModel::Fit()
     Setbeta(beta);
 }
 
-double WireCell::ElasticNetModel::_soft_thresholding(double delta, double lambda_)
+double WireCell::ElasticNetModel::_soft_thresholding(double delta, double lambda_, int index)
 {
     if (delta > lambda_) {
         return delta - lambda_;
+    }
+    else if ( fabs(delta) <= lambda ) {
+        // _active_beta[index] = false; // beta_j is thresholded to zero, i.e. inactive.
+        return 0;
     }
     else {
         if (non_negtive) {
             return 0;
         }
         else {
-            if (delta < -lambda_) {
-                return delta + lambda_;
-            }
-            else {
-                return 0;
-            }
+            return delta + lambda_;
         }
     }
 }

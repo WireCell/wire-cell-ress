@@ -1,4 +1,5 @@
 #include "WireCellRess/LassoModel.h"
+#include "WireCellRess/ElasticNetModel.h"
 
 #include <Eigen/Dense>
 using namespace Eigen;
@@ -6,13 +7,16 @@ using namespace Eigen;
 #include <iostream>
 using namespace std;
 
+void test_model(WireCell::LinearModel& m, MatrixXd& G, VectorXd& W);
+
+
 int main(int argc, char* argv[])
 {
     // std::srand((unsigned int) time(0));
 
-    const int N_CELL = 15;
-    const int N_ZERO = 10;
-    const int N_WIRE = int(N_CELL * 0.8);
+    const int N_CELL = 60;
+    const int N_ZERO = 30;
+    const int N_WIRE = int(N_CELL * 0.5);
 
     // initialize C vector: NCELL cells with NZERO zeros. (true charge in each cell)
     VectorXd C = VectorXd::Random(N_CELL)*50 + VectorXd::Constant(N_CELL, 150);
@@ -33,40 +37,36 @@ int main(int argc, char* argv[])
     // W vector is the measured charge on wires.
     VectorXd W = G * C;
 
-    // cout << W << endl << endl;
-    // cout << G << endl << endl;
-    // cout << C << endl << endl;
-
-    WireCell::ElasticNetModel m(0.5, 0.99, 100000, 1e-4);
-    m.SetData(G, W);
-    m.Fit();
-    VectorXd beta_elastic_net = m.Getbeta();
-
-    WireCell::LassoModel m2(0.5, 100000, 1e-4);
-    m2.SetData(G, W);
-    m2.Fit();
-    VectorXd beta_lasso = m2.Getbeta();
-
     cout << "geometry matrix:" << endl;
     cout << G << endl << endl;
+
+    // cout << "measured charge on each wire:" << endl;
+    // cout << W.transpose() << endl << endl;
 
     cout << "true charge of each cell:" << endl;
     cout << C.transpose() << endl << endl;
 
-    cout << "fitted charge of each cell: Elastic Net" << endl;
-    cout << beta_elastic_net.transpose() << endl << endl;
+    WireCell::ElasticNetModel m(0.5, 0.99, 100000, 1e-4);
+    test_model(m, G, W);
 
-    cout << "fitted charge of each cell: Lasso" << endl;
-    cout << beta_lasso.transpose() << endl << endl;
-
-    cout << "measured charge on each wire:" << endl;
-    cout << W.transpose() << endl << endl;
-
-    cout << "predicted charge on each wire: Lasso" << endl;
-    cout << m2.Predict().transpose() << endl << endl;
-
-    cout << "residual distance: Elastic Net: " << (m.Predict() - W).norm()
-         << ", Lasso: " << (m2.Predict() - W).norm()  << endl;
+    WireCell::LassoModel m2(0.5, 100000, 1e-3);
+    test_model(m2, G, W);
 
     return 0;
+}
+
+void test_model(WireCell::LinearModel& m, MatrixXd& G, VectorXd& W)
+{
+    m.SetData(G, W);
+    m.Fit();
+    VectorXd beta = m.Getbeta();
+
+    cout << "fitted charge of each cell: " << m.name << endl;
+    cout << beta.transpose() << endl << endl;
+
+    // cout << "predicted charge on each wire: Lasso" << endl;
+    // cout << m.Predict().transpose() << endl << endl;
+
+    cout << "average residual charge difference per wire: " << m.name << ": "
+         << m.MeanResidual() << endl << endl;
 }

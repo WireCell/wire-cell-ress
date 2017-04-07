@@ -2,6 +2,7 @@
 #define WIRECELLRESS_LINEARMODEL_H
 
 #include <Eigen/Dense>
+#include <string>
 
 namespace WireCell {
 
@@ -21,6 +22,8 @@ public:
 
     virtual void Fit() {};
     Eigen::VectorXd Predict();
+    double MeanResidual();
+    std::string name;
 
 protected:
     // Fit: y = X * beta

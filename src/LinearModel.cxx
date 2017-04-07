@@ -13,3 +13,8 @@ VectorXd WireCell::LinearModel::Predict()
 {
     return _X * _beta;
 }
+
+double WireCell::LinearModel::MeanResidual()
+{
+    return ( _y - Predict() ).norm() / _y.size();
+}
