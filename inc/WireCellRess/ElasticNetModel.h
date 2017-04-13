@@ -2,7 +2,8 @@
 #define WIRECELLRESS_ELASTICNETMODEL_H
 
 #include "WireCellRess/LinearModel.h"
-// #include <vector>
+#include <vector>
+#include <Eigen/Dense>
 
 namespace WireCell {
 
@@ -16,7 +17,11 @@ public:
     int max_iter; // maximum iteration
     double TOL;
     bool non_negtive;
+    Eigen::VectorXd lambda_weight; // each beta can have a weight on its regularization, default weight is 1;
 
+    void SetLambdaWeight(Eigen::VectorXd w) { lambda_weight = w; }
+    void SetLambdaWeight(int i, double weight) { lambda_weight(i) = weight; }
+    void SetX(Eigen::MatrixXd X) { LinearModel::SetX(X); SetLambdaWeight(Eigen::VectorXd::Zero(X.cols()) + Eigen::VectorXd::Constant(X.cols(),1.)); }
     void Fit();
 
 protected:

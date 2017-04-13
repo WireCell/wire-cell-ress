@@ -7,5 +7,4 @@
 
 ## Todo
 
-* Weighted Lasso
 * Group Lasso

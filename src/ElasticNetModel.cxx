@@ -57,7 +57,7 @@ void WireCell::ElasticNetModel::Fit()
             beta_tmp(j) = 0;
             VectorXd r_j = (y - X * beta_tmp);
             double delta_j = X_j.dot(r_j);
-            beta(j) = _soft_thresholding(delta_j, N*lambda*alpha) / (1+lambda*(1-alpha)) / norm(j);
+            beta(j) = _soft_thresholding(delta_j, N*lambda*alpha*lambda_weight(j)) / (1+lambda*(1-alpha)) / norm(j);
             // beta(j) = _soft_thresholding(delta_j, N*lambda*alpha, j) / (1+lambda*(1-alpha)) / norm(j);
             // if (j==0) cout << beta(j) << ", " << arg1 << endl;
         }
