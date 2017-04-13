@@ -22,7 +22,7 @@ public:
 protected:
     double _soft_thresholding(double x, double lambda_, int index);
     double _soft_thresholding(double x, double lambda_);
-    // std::vector<bool> _active_beta;
+    std::vector<bool> _active_beta;
 };
 
 }
