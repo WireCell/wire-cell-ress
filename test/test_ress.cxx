@@ -75,6 +75,9 @@ void test_lasso(WireCell::LassoModel& m, MatrixXd& G, VectorXd& W)
     // m.SetLambdaWeight(2, 10.);
     // m.SetLambdaWeight(6, 10.);
     m.Fit();
+
+    cout << "chi2: " << m.name << ": base="
+     << m.chi2_base() << ", l1=" << m.chi2_l1()<< endl << endl;
 }
 
 void print_results(WireCell::LinearModel& m, VectorXd& C)
@@ -89,6 +92,7 @@ void print_results(WireCell::LinearModel& m, VectorXd& C)
 
     cout << "average residual charge difference per wire: " << m.name << ": "
          << m.MeanResidual() << endl;
+
 
     int nbeta = beta.size();
 

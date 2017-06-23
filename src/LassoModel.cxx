@@ -18,3 +18,9 @@ WireCell::LassoModel::LassoModel(double lambda, int max_iter, double TOL, bool n
 
 WireCell::LassoModel::~LassoModel()
 {}
+
+double WireCell::LassoModel::chi2_l1()
+{
+    return lambda * Getbeta().lpNorm<1>();
+}
+

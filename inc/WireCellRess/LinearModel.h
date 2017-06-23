@@ -22,6 +22,7 @@ public:
 
     virtual void Fit() {};
     Eigen::VectorXd Predict();
+    double chi2_base();
     double MeanResidual();
     std::string name;
 
