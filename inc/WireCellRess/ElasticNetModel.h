@@ -22,7 +22,7 @@ public:
     void SetLambdaWeight(Eigen::VectorXd w) { lambda_weight = w; }
     void SetLambdaWeight(int i, double weight) { lambda_weight(i) = weight; }
     void SetX(Eigen::MatrixXd X) { LinearModel::SetX(X); SetLambdaWeight(Eigen::VectorXd::Zero(X.cols()) + Eigen::VectorXd::Constant(X.cols(),1.)); }
-    void Fit();
+    virtual void Fit();
 
 protected:
     double _soft_thresholding(double x, double lambda_);
