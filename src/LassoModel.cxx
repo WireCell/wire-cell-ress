@@ -112,6 +112,6 @@ void WireCell::LassoModel::Fit()
 
 double WireCell::LassoModel::chi2_l1()
 {
-  return lambda * Getbeta().lpNorm<1>() * Gety().size();
+  return 2 * lambda * Getbeta().lpNorm<1>() * Gety().size() ;
 }
 
