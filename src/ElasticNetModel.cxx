@@ -80,7 +80,7 @@ void WireCell::ElasticNetModel::Fit()
                 }
             }
             else {
-                cout << "found minimum at iteration: " << i << endl;
+	      //                cout << "found minimum at iteration: " << i << endl;
                 break;
             }
 

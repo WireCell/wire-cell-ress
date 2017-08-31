@@ -99,7 +99,7 @@ void WireCell::LassoModel::Fit()
       	  _active_beta[k] = true;
       	}
       }else {
-	cout << "found minimum at iteration: " << i << endl;
+	//	cout << "found minimum at iteration: " << i << endl;
 	break;
       }
     }
