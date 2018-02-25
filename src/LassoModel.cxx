@@ -95,7 +95,7 @@ void WireCell::LassoModel::Fit()
      // beta_tmp(j) = 0;
      // VectorXd r_j = (y - X * beta_tmp);
      // double delta_j = X_j.dot(r_j);
-     //std::cout << i << " " << j << " " << beta(j) << " " << std::endl;
+      //std::cout << i << " " << j << " " << beta(j) << " " << betalast(j) << std::endl;
      
     }
     double_check++;
@@ -111,7 +111,7 @@ void WireCell::LassoModel::Fit()
       	  _active_beta[k] = true;
       	}
       }else {
-	cout << "found minimum at iteration: " << i << " " << flag_initial_values << endl;
+	//cout << "found minimum at iteration: " << i << " " << flag_initial_values << endl;
 	break;
       }
     }
