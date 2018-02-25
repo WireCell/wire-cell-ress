@@ -11,8 +11,13 @@ public:
     ~LassoModel();
 
     void Fit();
+    void Set_init_values(std::vector<double> values);
     
     double chi2_l1();
+
+ private:
+    bool flag_initial_values;
+    std::vector<double> init_betas;
 
 };
 
