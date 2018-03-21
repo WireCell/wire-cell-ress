@@ -102,7 +102,7 @@ void WireCell::LassoModel::Fit()
     // cout << endl;
     VectorXd diff = beta - betalast;
 
-    //std::cout << i << " " << diff.squaredNorm() << " " << tol2 << std::endl;
+    // std::cout << i << " " << diff.squaredNorm() << " " << tol2 << std::endl;
     
     if (diff.squaredNorm()<tol2) {
       if (double_check!=1) {
