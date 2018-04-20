@@ -37,7 +37,8 @@ void WireCell::ElasticNetModel::Fit()
     Eigen::MatrixXd X = GetX();
 
     // cooridate decsent
-    int N = y.size();
+
+    //int N = y.size();
     VectorXd norm(nbeta);
     for (int j=0; j<nbeta; j++) {
         norm(j) = X.col(j).squaredNorm();

@@ -32,7 +32,7 @@ void WireCell::LassoModel::Fit()
   Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
 
   if (flag_initial_values){
-    for (size_t i=0;i!=beta.size();i++){
+    for (Eigen::Index i=0;i!=beta.size();i++){
       beta(i) = init_betas.at(i);
     }
   }
@@ -45,7 +45,7 @@ void WireCell::LassoModel::Fit()
   Eigen::MatrixXd X = GetX();
   
   // cooridate decsent
-  int N = y.size();
+  //int N = y.size();
   VectorXd norm(nbeta);
   for (int j=0; j<nbeta; j++) {
     norm(j) = X.col(j).squaredNorm();
