@@ -1,2 +1,1 @@
-bld.smplpkg('WireCellRess', use='EIGEN')
-
+bld.smplpkg('WireCellRess', use='EIGEN ZLIB')
