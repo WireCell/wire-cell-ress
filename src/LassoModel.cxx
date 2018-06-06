@@ -32,7 +32,7 @@ void WireCell::LassoModel::Fit()
   Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
 
   if (flag_initial_values){
-    for (size_t i=0;i!=beta.size();i++){
+    for (int i=0;i!=beta.size();i++){
       beta(i) = init_betas.at(i);
     }
   }
