@@ -25,8 +25,11 @@ WireCell::ElasticNetModel::~ElasticNetModel()
 
 void WireCell::ElasticNetModel::Fit()
 {
-    // initialize solution to zero
-    Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
+    // initialize solution to zero unless user set beta already
+    Eigen::VectorXd beta = _beta;
+    if (0 == beta.size()) {
+        beta = VectorXd::Zero(_X.cols());
+    }
 
     // initialize active_beta to true
     int nbeta = beta.size();

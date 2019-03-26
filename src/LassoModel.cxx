@@ -13,7 +13,6 @@ using namespace std;
 
 WireCell::LassoModel::LassoModel(double lambda, int max_iter, double TOL, bool non_negtive)
 : ElasticNetModel(lambda, 1., max_iter, TOL, non_negtive)
-, flag_initial_values(false)
 {
     name = "Lasso";
 }
@@ -21,20 +20,21 @@ WireCell::LassoModel::LassoModel(double lambda, int max_iter, double TOL, bool n
 WireCell::LassoModel::~LassoModel()
 {}
 
-void WireCell::LassoModel::Set_init_values(std::vector<double> values){
-  flag_initial_values = true;
-  init_betas = values;
+void WireCell::LassoModel::Set_init_values(std::vector<double> values)
+{
+    const size_t nvals = values.size();
+    _beta = VectorXd::Zero(nvals);
+    for (size_t i=0; i != nvals; ++i) {
+        _beta(i) = values.at(i);
+    }
 }
 
 void WireCell::LassoModel::Fit()
 {
-  // initialize solution to zero
-  Eigen::VectorXd beta = VectorXd::Zero(_X.cols());
-
-  if (flag_initial_values){
-    for (int i=0;i!=beta.size();i++){
-      beta(i) = init_betas.at(i);
-    }
+  // initialize solution to zero unless user set beta already
+  Eigen::VectorXd beta = _beta;
+  if (0 == beta.size()) {
+    beta = VectorXd::Zero(_X.cols());
   }
   
   // initialize active_beta to true

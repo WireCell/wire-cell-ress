@@ -15,10 +15,6 @@ public:
     
     double chi2_l1();
 
- private:
-    bool flag_initial_values;
-    std::vector<double> init_betas;
-
 };
 
 }
